@@ -27,6 +27,13 @@ export default function TabLayout() {
         }),
       }}>
       <Tabs.Screen
+        name="tracking"
+        options={{
+          title: 'Tracking',
+          tabBarIcon: ({ color }) => <IconSymbol size={28} name="timer.fill" color={color} />,
+        }}
+      />
+      <Tabs.Screen
         name="index"
         options={{
           title: 'Home',
@@ -41,5 +48,6 @@ export default function TabLayout() {
         }}
       />
     </Tabs>
+  
   );
 }
