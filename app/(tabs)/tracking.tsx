@@ -76,12 +76,10 @@ export default function TrackingPage(): JSX.Element {
       <SafeAreaView style={styles.container}>
       
         <Text style={styles.title}>Tracking Page</Text>
-      
         <View style={styles.travelContainer}>
-            <ImageBackground source={require('../../assets/images/snowfallbg.jpg')} style={styles.sleighContainer}>
+            <ImageBackground source={require('../../assets/images/snowfallbg.jpg')} imageStyle={{opacity: 0.7}} style={styles.sleighContainer}>
               <View style={styles.textWindow}>
                 <Text style={styles.sittingTimer}>
-                  {/* Sitting Time{'\n'} */}
                   {formatTime(sittingTime)}
                 </Text>
               </View>
@@ -147,7 +145,7 @@ const styles = StyleSheet.create({
     left: 80,
     right: 80,
     bottom: 120,
-    backgroundColor: 'rgba(202, 240, 248, 0.8)',
+    backgroundColor: 'rgba(202, 240, 248, 1)',
     padding: 10,
     borderRadius: 15,
     marginBottom: 10,
@@ -181,7 +179,6 @@ const styles = StyleSheet.create({
     overflow: 'hidden', // Ensure the background respects the rounded corners
     borderWidth: 0.3, // Set the width of the border
     borderColor: '#ccc', // Set the color of the border
-    opacity: 0.7
   },
   snow: {
     position: 'absolute',
