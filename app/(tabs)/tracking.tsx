@@ -78,7 +78,6 @@ export default function TrackingPage(): JSX.Element {
         <Text style={styles.title}>Tracking Page</Text>
       
         <View style={styles.travelContainer}>
-          {/* <BlurView intensity={100} style={styles.blurContainer}> */}
             <ImageBackground source={require('../../assets/images/snowfallbg.jpg')} style={styles.sleighContainer}>
               <View style={styles.textWindow}>
                 <Text style={styles.sittingTimer}>
@@ -86,17 +85,15 @@ export default function TrackingPage(): JSX.Element {
                   {formatTime(sittingTime)}
                 </Text>
               </View>
+              <Image source={require('../../assets/images/snow.png')} style={styles.snow} resizeMode='cover' />
               <Animated.View style={[styles.sleigh, { left: sleighPosition }]}>
                 <Image source={require('../../assets/images/sleigh.png')} style={styles.sleighImage} resizeMode="contain" />
               </Animated.View>
             </ImageBackground>
-          {/* </BlurView> */}
-          {/* <Button title="Start Sitting Timer" onPress={startSittingTimer} disabled={isSitting} />
-          <Button title="Reset Timer" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} /> */}
         </View>
 
         <Button title="Start Sitting Timer" onPress={startSittingTimer} disabled={isSitting} />
-          <Button title="Reset Timer" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} />
+        <Button title="Reset Timer" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} />
         
       </SafeAreaView>
       </BlurView>
@@ -141,21 +138,29 @@ const styles = StyleSheet.create({
   sittingTimer: {
     fontSize:30,
     fontFamily: 'RedHatText-SemiBold',
-    color: '#fff',
+    color: '#1d3557',
     marginBottom: 10
   },
   textWindow: {
     position: 'absolute',
-    top: 100,
+    top: 80,
     left: 80,
     right: 80,
-    bottom: 100,
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    bottom: 120,
+    backgroundColor: 'rgba(202, 240, 248, 0.8)',
     padding: 10,
-    borderRadius: 10,
+    borderRadius: 15,
     marginBottom: 10,
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    borderWidth: 0.2, // Add border width
+    borderColor: '#00b4d8', // Add border color
+    shadowColor: '#000', // Shadow color for iOS
+    shadowOffset: { width: 0, height: 2 }, // Shadow offset for iOS
+    shadowOpacity: 0.3, // Shadow opacity for iOS
+    shadowRadius: 4, // Shadow radius for iOS
+    elevation: 5, // Elevation for Android
+    opacity: 1
   },
   // blurContainer: {
   //   width: 400,
@@ -176,6 +181,15 @@ const styles = StyleSheet.create({
     overflow: 'hidden', // Ensure the background respects the rounded corners
     borderWidth: 0.3, // Set the width of the border
     borderColor: '#ccc', // Set the color of the border
+    opacity: 0.7
+  },
+  snow: {
+    position: 'absolute',
+    bottom: -110,
+    left: -100,
+    width: 550, 
+    height: 200,
+    // opacity: 1
   },
   sleigh: {
     position: 'absolute',
