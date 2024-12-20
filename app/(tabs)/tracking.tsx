@@ -1,8 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { SafeAreaView, View, Text, Button, Image, StyleSheet, Animated, ImageBackground } from 'react-native';
+import { SafeAreaView, View, Text, Button, Image, StyleSheet, Animated, ImageBackground, Platform } from 'react-native';
 import { BlurView } from 'expo-blur';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
+import { TimerPicker } from "react-native-timer-picker";
+import { LinearGradient } from "expo-linear-gradient"; 
 
 export default function TrackingPage(): JSX.Element {
   const [sittingTime, setSittingTime] = useState(0);
@@ -10,11 +12,12 @@ export default function TrackingPage(): JSX.Element {
   const [isSitting, setIsSitting] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const progress = useRef(new Animated.Value(0)).current;
+  const [showPicker, setShowPicker] = useState(false);
 
   useEffect(() => {
     const loadFonts = async () => {
       await Font.loadAsync({
-        'Roboto-Bold': require('../../assets/fonts/RedHatText-SemiBold.ttf'),
+        'RedHatText-SemiBold': require('../../assets/fonts/RedHatText-SemiBold.ttf'),
       });
       setFontsLoaded(true);
     };
@@ -66,6 +69,11 @@ export default function TrackingPage(): JSX.Element {
     return `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
+  const handleDurationChange = (duration: { hours: number, minutes: number }) => {
+    const totalSeconds = duration.hours * 3600 + duration.minutes * 60;
+    setMaxSittingTime(totalSeconds);
+  };
+
   if (!fontsLoaded) {
     return <AppLoading />;
   }
@@ -90,9 +98,44 @@ export default function TrackingPage(): JSX.Element {
             </ImageBackground>
         </View>
 
-        <Button title="Start Sitting Timer" onPress={startSittingTimer} disabled={isSitting} />
-        <Button title="Reset Timer" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} />
-        
+        <Button title="Set Max Time" onPress={() => setShowPicker(true)} />
+          {showPicker && (
+            <View style={styles.timerPicker}>
+              <TimerPicker
+                padWithNItems={3}
+                hideSeconds
+                minuteLabel="min"
+                LinearGradient={LinearGradient}
+                allowFontScaling={true}
+                onDurationChange={handleDurationChange}
+                styles={{
+                    theme: "dark",
+                    pickerItem: {
+                        fontSize: 20,
+                    },
+                    pickerLabel: {
+                        fontSize: 20,
+                        right: -20,
+                    },
+                    pickerLabelContainer: {
+                        width: 60,
+                        height: 250
+                    },
+                    pickerItemContainer: {
+                        width: 120,
+                        height: 36
+                    },
+                    backgroundColor: "rgba(11, 161, 225, 1)", 
+                }}
+              />
+              <Button title="Done" onPress={() => setShowPicker(false)} />
+            </View>
+          )}
+        <View style={{marginTop: 60}}>
+          <Button title="Start Sitting Timer" onPress={startSittingTimer} disabled={isSitting} />
+          <Button title="Reset Timer" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} />
+        </View>
+
       </SafeAreaView>
       </BlurView>
     </ImageBackground>
@@ -186,7 +229,13 @@ const styles = StyleSheet.create({
     left: -100,
     width: 550, 
     height: 200,
-    // opacity: 1
+  },
+  timerPicker: {
+    width: 150,
+    height: 170,
+    alignItems: "center", 
+    justifyContent: "center",
+    borderRadius: 20,
   },
   sleigh: {
     position: 'absolute',
