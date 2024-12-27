@@ -1,18 +1,21 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { SafeAreaView, View, Text, Button, Image, StyleSheet, Animated, ImageBackground, Platform } from 'react-native';
+import { SafeAreaView, View, Text, Button, Image, StyleSheet, Animated, ImageBackground, Modal } from 'react-native';
 import { BlurView } from 'expo-blur';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
-import { TimerPicker } from "react-native-timer-picker";
+import { TimerPicker, TimerPickerModal } from "react-native-timer-picker";
 import { LinearGradient } from "expo-linear-gradient"; 
 
 export default function TrackingPage(): JSX.Element {
   const [sittingTime, setSittingTime] = useState(0);
-  const [maxSittingTime, setMaxSittingTime] = useState(60);
+  const [maxSittingTime, setMaxSittingTime] = useState(10); // Seconds
   const [isSitting, setIsSitting] = useState(false);
   const [fontsLoaded, setFontsLoaded] = useState(false);
   const progress = useRef(new Animated.Value(0)).current;
+  const intervalRef = useRef<NodeJS.Timeout | null>(null); // Ref to store the interval ID
   const [showPicker, setShowPicker] = useState(false);
+  // const [tempHours, setTempHours] = useState(0); // Temporary state for hours
+  // const [tempMinutes, setTempMinutes] = useState(1); // Temporary state for minutes
 
   useEffect(() => {
     const loadFonts = async () => {
@@ -31,30 +34,52 @@ export default function TrackingPage(): JSX.Element {
       duration: 500,
       useNativeDriver: false, // Important for percentage based animation
     }).start();
-  }, [sittingTime, maxSittingTime, progress]);
+  }, [sittingTime]);
 
   const startSittingTimer = () => {
     if (!isSitting) {
       setIsSitting(true);
-      let interval = setInterval(() => {
+      intervalRef.current = setInterval(() => {
+        // setSittingTime(prev => {
+        //   if (prev >= maxSittingTime) {
+        //     clearInterval(intervalRef.current!);
+        //     intervalRef.current = null; 
+        //     console.log('clear interval');
+        //     setIsSitting(false);
+        //     console.log('isSitting', isSitting);
+        //     setSittingTime(0);
+        //     console.log('sittingTime', sittingTime);
+        //     progress.setValue(0);
+        //     console.log('progress', progress);
+        //     // resetTimer();
+        //     alert('Time to stand!');
+        //     return maxSittingTime; // Ensure it doesn't go over max
+        //   }
+        //   return prev + 1;
+        // });
         setSittingTime(prev => {
           if (prev >= maxSittingTime) {
-            clearInterval(interval);
+            clearInterval(intervalRef.current!);
+            intervalRef.current = null; 
+            // slog('progress', progress);
+            // resetTimer();
             alert('Time to stand!');
-            setIsSitting(false);
             return maxSittingTime; // Ensure it doesn't go over max
           }
           return prev + 1;
         });
-      }, 1000);
-      return () => clearInterval(interval); // Cleanup on unmount
+      }, 1000); // ms
+      return () => clearInterval(intervalRef.current!); // Cleanup on unmount
     }
   };
 
   const resetTimer = () => {
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+    }
     setSittingTime(0);
     progress.setValue(0);
-    setIsSitting(false);
+    setIsSitting(false); 
   };
 
   const sleighPosition = progress.interpolate({
@@ -69,9 +94,28 @@ export default function TrackingPage(): JSX.Element {
     return `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${remainingSeconds.toString().padStart(2, '0')}`;
   }
 
+  // const handleDurationChange = (duration: { hours: number, minutes: number }) => {
+  //   setTempHours(duration.hours);
+  //   setTempMinutes(duration.minutes);
+  // };
+
+  // const handleDone = () => {
+  //   const totalSeconds = tempHours * 3600 + tempMinutes * 60;
+  //   setMaxSittingTime(totalSeconds);
+  //   setShowPicker(false);
+  // };
+
+  // const handleDone = () => {
+  //   setShowPicker(false);
+  // };
+
+  // const handleCancel = () => {
+  //   setShowPicker(false);
+  // };
+
   const handleDurationChange = (duration: { hours: number, minutes: number }) => {
     const totalSeconds = duration.hours * 3600 + duration.minutes * 60;
-    setMaxSittingTime(totalSeconds);
+    return totalSeconds;
   };
 
   if (!fontsLoaded) {
@@ -84,6 +128,7 @@ export default function TrackingPage(): JSX.Element {
       <SafeAreaView style={styles.container}>
       
         <Text style={styles.title}>Tracking Page</Text>
+
         <View style={styles.travelContainer}>
             <ImageBackground source={require('../../assets/images/snowfallbg.jpg')} imageStyle={{opacity: 0.7}} style={styles.sleighContainer}>
               <View style={styles.textWindow}>
@@ -98,7 +143,7 @@ export default function TrackingPage(): JSX.Element {
             </ImageBackground>
         </View>
 
-        <Button title="Set Max Time" onPress={() => setShowPicker(true)} />
+        {/* <Button title="Set Max Time" onPress={() => setShowPicker(true)} />
           {showPicker && (
             <View style={styles.timerPicker}>
               <TimerPicker
@@ -130,11 +175,135 @@ export default function TrackingPage(): JSX.Element {
               />
               <Button title="Done" onPress={() => setShowPicker(false)} />
             </View>
-          )}
-        <View style={{marginTop: 60}}>
+          )} */}
+
+        <Button title="Set Max Time" onPress={() => setShowPicker(true)} />
+          {/* <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showPicker}
+            onRequestClose={() => setShowPicker(false)}
+          > */}
+          {/* {showPicker && ( */}
+            {/* //  */}
+            {/* <View style={styles.modalContainer}> */}
+            <View style={styles.modalContainer}>
+              {/* <View style={styles.pickerButtonContainer}> */}
+                {/* <Button title="Done" onPress={() => setShowPicker(false)} /> */}
+              
+                {/* <TimerPicker
+                  padWithNItems={3}
+                  hideSeconds
+                  minuteLabel="min"
+                  hourLabel="h"
+                  LinearGradient={LinearGradient}
+                  allowFontScaling={true}
+                  onDurationChange={handleDurationChange}
+                  styles={{
+                      theme: "dark",
+                      pickerItem: {
+                          fontSize: 20,
+                      },
+                      pickerLabel: {
+                          fontSize: 20,
+                          right: -20,
+                      },
+                      pickerLabelContainer: {
+                          width: 60,
+                          height: 250
+                      },
+                      pickerItemContainer: {
+                          width: 120,
+                          height: 36
+                      },
+                      backgroundColor: "rgba(11, 161, 225, 1)", 
+                  }}
+                />  */}
+                  <TimerPickerModal
+                  hideSeconds
+                  visible={showPicker}
+                  setIsVisible={setShowPicker}
+                  onConfirm={(pickedDuration) => {
+                    setMaxSittingTime(handleDurationChange(pickedDuration));
+                    setShowPicker(false);
+                    console.log('pickedDuration', pickedDuration);
+                  }}
+                  onCancel={() => setShowPicker(false)}
+                  // closeOnOverlayPress
+                  // Audio={Audio}
+                  LinearGradient={LinearGradient}
+                  // Haptics={Haptics}
+                  styles={{
+                      theme: "dark",
+                  }}
+                  modalProps={{
+                      overlayOpacity: 0.2,
+                  }}
+              />
+            {/* </View> */}
+          
+          <View style={{marginTop: 60}}>
           <Button title="Start Sitting Timer" onPress={startSittingTimer} disabled={isSitting} />
           <Button title="Reset Timer" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} />
-        </View>
+          </View> 
+          </View>
+          {/* // </View> */}
+          {/* )} */}
+          {/* </Modal> */}
+
+
+                  {/* <Button title="Cancel" onPress={handleCancel} />
+                  <Button title="Done" onPress={handleDone} />
+                </View>
+              </View>
+            </View>
+          </Modal> */}
+
+        {/* <Button title="Set Max Time" onPress={() => setShowPicker(true)} />
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={showPicker}
+            onRequestClose={() => setShowPicker(false)}
+          >
+            <View style={styles.modalContainer}>
+              <View style={styles.modalView}>
+                <TimerPicker
+                  padWithNItems={3}
+                  hideSeconds
+                  minuteLabel="min"
+                  secondLabel="sec"
+                  LinearGradient={LinearGradient}
+                  allowFontScaling={true}
+                  onDurationChange={handleDurationChange}
+                  styles={{
+                      theme: "light",
+                      pickerItem: {
+                          fontSize: 20,
+                      },
+                      pickerLabel: {
+                          fontSize: 20,
+                          right: -20,
+                      },
+                      pickerLabelContainer: {
+                          width: 60,
+                          height: 250
+                      },
+                      pickerItemContainer: {
+                          width: 120,
+                          height: 36
+                      },
+                  }}
+                />
+                <View style={styles.buttonContainer}>
+                  <Button title="Cancel" onPress={handleCancel} />
+                  <Button title="Done" onPress={handleDone} />
+                </View>
+              </View>
+            </View>
+          </Modal> */}
+
+        
 
       </SafeAreaView>
       </BlurView>
@@ -230,13 +399,53 @@ const styles = StyleSheet.create({
     width: 550, 
     height: 200,
   },
-  timerPicker: {
-    width: 150,
-    height: 170,
-    alignItems: "center", 
-    justifyContent: "center",
-    borderRadius: 20,
+  // timerPicker: {
+  //   width: 150,
+  //   height: 170,
+  //   alignItems: "center", 
+  //   justifyContent: "center",
+  //   borderRadius: 20,
+  // },
+  // timerPicker: {
+  //   width: 150,
+  //   height: 170,
+  //   alignItems: "center", 
+  //   justifyContent: "center",
+  //   borderRadius: 20,
+  //   flex: 1,
+  //   backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background color
+  //   // backgroundColor: 'white',
+  //   padding: 20,
+  //   shadowColor: '#000',
+  //   shadowOffset: { width: 0, height: 2 },
+  //   shadowOpacity: 0.25,
+  //   shadowRadius: 4,
+  //   elevation: 5,
+  // },
+  modalContainer: {
+    // height: '25%',
+    // width: '60%',
+    flex: 1,
+    // backgroundColor: '#25292e',
+    // borderTopRightRadius: 18,
+    // borderTopLeftRadius: 18,
+    alignItems: 'center',
+    justifyContent: 'center',
+    // position: 'absolute',
+    // left: 80,
+    // bottom: 300,
   },
+  // pickerButtonContainer: {
+  //   height: '16%',
+  //   backgroundColor: '#464C55',
+  //   borderTopRightRadius: 10,
+  //   borderTopLeftRadius: 10,
+  //   overflow: 'hidden',
+  //   paddingHorizontal: 20,
+  //   flexDirection: 'row',
+  //   alignItems: 'center',
+  //   justifyContent: 'center',
+  // },
   sleigh: {
     position: 'absolute',
     bottom: 15,
@@ -248,5 +457,28 @@ const styles = StyleSheet.create({
   sleighImage: {
     width: 40,
     height: 40,
+  },
+  // modalContainer: {
+  //   flex: 1,
+  //   justifyContent: 'center',
+  //   alignItems: 'center',
+  //   backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background color
+  // },
+  // modalView: {
+  //   backgroundColor: 'white',
+  //   borderRadius: 20,
+  //   padding: 20,
+  //   alignItems: 'center',
+  //   shadowColor: '#000',
+  //   shadowOffset: { width: 0, height: 2 },
+  //   shadowOpacity: 0.25,
+  //   shadowRadius: 4,
+  //   elevation: 5,
+  // },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    width: '100%',
+    marginTop: 20,
   },
 });
