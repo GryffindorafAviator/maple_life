@@ -3,8 +3,12 @@ import { SafeAreaView, View, Text, Button, Image, StyleSheet, Animated, ImageBac
 import { BlurView } from 'expo-blur';
 import * as Font from 'expo-font';
 import AppLoading from 'expo-app-loading';
-import { TimerPicker, TimerPickerModal } from "react-native-timer-picker";
+import { TimerPickerModal } from "react-native-timer-picker";
 import { LinearGradient } from "expo-linear-gradient"; 
+import LongButton from '@/components/longButton';
+import SnowBall from '../../assets/icons/snowBall.svg';
+import SantHat from '../../assets/icons/santaHat.svg';
+import ChristmasTree from '../../assets/icons/christmasTree.svg';
 
 export default function TrackingPage(): JSX.Element {
   const [sittingTime, setSittingTime] = useState(0);
@@ -177,7 +181,9 @@ export default function TrackingPage(): JSX.Element {
             </View>
           )} */}
 
-        <Button title="Set Max Time" onPress={() => setShowPicker(true)} />
+        {/* <Button title="Set Max Time" onPress={() => setShowPicker(true)} /> */}
+        <View style={styles.buttons}>
+          <LongButton icon={<SnowBall width={40} height={40} />} label="Set Sitting Time" onPress={() => setShowPicker(true)} />
           {/* <Modal
             animationType="slide"
             transparent={true}
@@ -219,33 +225,34 @@ export default function TrackingPage(): JSX.Element {
                       backgroundColor: "rgba(11, 161, 225, 1)", 
                   }}
                 />  */}
-                  <TimerPickerModal
-                  hideSeconds
-                  visible={showPicker}
-                  setIsVisible={setShowPicker}
-                  onConfirm={(pickedDuration) => {
-                    setMaxSittingTime(handleDurationChange(pickedDuration));
-                    setShowPicker(false);
-                    console.log('pickedDuration', pickedDuration);
-                  }}
-                  onCancel={() => setShowPicker(false)}
-                  // closeOnOverlayPress
-                  // Audio={Audio}
-                  LinearGradient={LinearGradient}
-                  // Haptics={Haptics}
-                  styles={{
-                      theme: "dark",
-                  }}
-                  modalProps={{
-                      overlayOpacity: 0.2,
-                  }}
-              />
+              <TimerPickerModal
+                hideSeconds
+                visible={showPicker}
+                setIsVisible={setShowPicker}
+                onConfirm={(pickedDuration) => {
+                  setMaxSittingTime(handleDurationChange(pickedDuration));
+                  setShowPicker(false);
+                }}
+                onCancel={() => setShowPicker(false)}
+                // closeOnOverlayPress
+                // Audio={Audio}
+                LinearGradient={LinearGradient}
+                // Haptics={Haptics}
+                styles={{
+                    theme: "dark",
+                }}
+                modalProps={{
+                    overlayOpacity: 0.2,
+                }}
+            />
             {/* </View> */}
           
-          <View style={{marginTop: 60}}>
-          <Button title="Start Sitting Timer" onPress={startSittingTimer} disabled={isSitting} />
-          <Button title="Reset Timer" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} />
-          </View> 
+            {/* <View style={{marginTop: 20}}> */}
+              <LongButton icon={<SantHat width={40} height={40} />} label="Start" onPress={startSittingTimer} disabled={isSitting}/>
+              <LongButton icon={<ChristmasTree width={40} height={40} />} label="Reset" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} />
+              {/* <Button title="Start Sitting Timer" onPress={startSittingTimer} disabled={isSitting} />
+              <Button title="Reset Timer" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} /> */}
+            </View> 
           </View>
           {/* // </View> */}
           {/* )} */}
@@ -372,16 +379,6 @@ const styles = StyleSheet.create({
     elevation: 5, // Elevation for Android
     opacity: 1
   },
-  // blurContainer: {
-  //   width: 400,
-  //   height: 400,
-  //   padding: 10,
-  //   margin: 5,
-  //   textAlign: 'center',
-  //   justifyContent: 'center',
-  //   overflow: 'hidden',
-  //   borderRadius: 20,
-  // },
   sleighContainer: {
     position: 'relative',
     justifyContent: 'center',
@@ -399,53 +396,10 @@ const styles = StyleSheet.create({
     width: 550, 
     height: 200,
   },
-  // timerPicker: {
-  //   width: 150,
-  //   height: 170,
-  //   alignItems: "center", 
-  //   justifyContent: "center",
-  //   borderRadius: 20,
-  // },
-  // timerPicker: {
-  //   width: 150,
-  //   height: 170,
-  //   alignItems: "center", 
-  //   justifyContent: "center",
-  //   borderRadius: 20,
-  //   flex: 1,
-  //   backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background color
-  //   // backgroundColor: 'white',
-  //   padding: 20,
-  //   shadowColor: '#000',
-  //   shadowOffset: { width: 0, height: 2 },
-  //   shadowOpacity: 0.25,
-  //   shadowRadius: 4,
-  //   elevation: 5,
-  // },
   modalContainer: {
-    // height: '25%',
-    // width: '60%',
-    flex: 1,
-    // backgroundColor: '#25292e',
-    // borderTopRightRadius: 18,
-    // borderTopLeftRadius: 18,
     alignItems: 'center',
     justifyContent: 'center',
-    // position: 'absolute',
-    // left: 80,
-    // bottom: 300,
   },
-  // pickerButtonContainer: {
-  //   height: '16%',
-  //   backgroundColor: '#464C55',
-  //   borderTopRightRadius: 10,
-  //   borderTopLeftRadius: 10,
-  //   overflow: 'hidden',
-  //   paddingHorizontal: 20,
-  //   flexDirection: 'row',
-  //   alignItems: 'center',
-  //   justifyContent: 'center',
-  // },
   sleigh: {
     position: 'absolute',
     bottom: 15,
@@ -458,27 +412,13 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
   },
-  // modalContainer: {
-  //   flex: 1,
-  //   justifyContent: 'center',
-  //   alignItems: 'center',
-  //   backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent background color
-  // },
-  // modalView: {
-  //   backgroundColor: 'white',
-  //   borderRadius: 20,
-  //   padding: 20,
-  //   alignItems: 'center',
-  //   shadowColor: '#000',
-  //   shadowOffset: { width: 0, height: 2 },
-  //   shadowOpacity: 0.25,
-  //   shadowRadius: 4,
-  //   elevation: 5,
-  // },
+  buttons: {
+    width: '100%',
+  },
   buttonContainer: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    width: '100%',
+    width: '70%',
     marginTop: 20,
   },
 });
