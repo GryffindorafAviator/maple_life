@@ -1,24 +1,35 @@
 import React, { ReactNode } from "react";
 import { Pressable, StyleSheet, Text, View } from "react-native";
+import RedHatText from "./RedHatText";
 
 type Props = {
   icon: ReactNode;
   label: string;
   onPress: () => void;
   disabled?: boolean;
+  fontFamily?: string;
+  color?: string;
+  labelColor?: string;
+  buttonDisabledColor?: string;
+  labelDisabledColor?: string;
 };
 
-const LongButton: React.FC<Props> = ({ icon, label, onPress, disabled=false }: Props) => {
+const LongButton: React.FC<Props> = ({ icon, label, onPress, disabled=false, fontFamily, color='#0077b6', labelColor='#fff', buttonDisabledColor='rgba(173, 232, 244, 0.9)', labelDisabledColor='rgba(169, 169, 169, 1)' }: Props) => {
     return (
         <Pressable 
-            style={[styles.button, disabled && styles.buttonDisabled]} // Apply disabled style conditionally
+            style={[styles.button, { backgroundColor: color }, disabled && { backgroundColor: buttonDisabledColor}]} // Apply disabled style conditionally
             onPress={onPress}
             disabled={disabled}
         >
             <View style={styles.icon}>
                 {icon}
             </View>
-            <Text style={styles.label}>{label}</Text>
+            <RedHatText 
+                style={[styles.label, { fontFamily }]} // Apply disabled style conditionally
+                textColor={disabled ? labelDisabledColor : labelColor}
+            >
+                {label}
+            </RedHatText>
         </Pressable>
     );  
 };
@@ -41,15 +52,19 @@ const styles = StyleSheet.create({
         shadowRadius: 4, // Shadow radius for iOS
         elevation: 5, // Elevation for Android
     },
-    buttonDisabled: {
-        backgroundColor: 'rgba(173, 232, 244, 0.8)', // Change background color when disabled
-    },
+    // buttonDisabled: {
+    //     backgroundColor: 'rgba(173, 232, 244, 0.9)', // Change background color when disabled
+    // },
     icon: {
-        marginRight: 10
+        marginRight: 10,
+        // color: 'rgba(255, 255, 255, 1)', // Set label text color to white in RGBA format
     },
     label: {
         marginLeft: 10,
-    }
+    },
+    // labelDisabled: {
+    //     color: 'rgba(169, 169, 169, 1)', // Change text color when disabled (dark gray)
+    // },
 })
 
 export default LongButton;
