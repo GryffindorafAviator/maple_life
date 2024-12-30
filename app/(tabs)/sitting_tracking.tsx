@@ -8,7 +8,8 @@ import SnowBall from '../../assets/icons/snowBall.svg';
 import SantHat from '../../assets/icons/santaHat.svg';
 import ChristmasTree from '../../assets/icons/christmasTree.svg';
 import DisplayCard from '@/components/DisplayCard';
-import RedHatText from '@/components/RedHatText';
+import RedHatText from '@/components/RedHatSBText';
+import SantaSleighD from '@/components/SantaSleighD';
 
 export default function TrackingPage(): JSX.Element {
     const [sittingTime, setSittingTime] = useState(0);
@@ -75,8 +76,9 @@ export default function TrackingPage(): JSX.Element {
         <ImageBackground source={require('../../assets/images/chtree.jpg')} resizeMode='cover' style={styles.backgroundImage}>
             <BlurView intensity={15} style={styles.fullScreenBlur}>
                 <SafeAreaView style={styles.container}>
-                
-                    <RedHatText style={styles.title} textColor='#1d3557'>Tracking Page</RedHatText>
+                    <View style={styles.title}>
+                        <SantaSleighD textColor='#0077b6' fontSize={47}>Sitting Time</SantaSleighD>
+                    </View>
 
                     <DisplayCard
                         backgroundImage={require('../../assets/images/snowfallbg.jpg')}
@@ -132,9 +134,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     title: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        marginBottom: 20,
+        marginTop: 20,
     },
     buttons: {
         width: '100%',

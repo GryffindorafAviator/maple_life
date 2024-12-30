@@ -27,16 +27,16 @@ export default function TabLayout() {
         }),
       }}>
       <Tabs.Screen
-        name="tracking"
+        name="sitting_tracking"
         options={{
-          title: 'Tracking',
+          title: 'Sitting',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="timer.fill" color={color} />,
         }}
       />
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Home',
+          title: 'Eating',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
         }}
       />

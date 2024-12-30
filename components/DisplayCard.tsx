@@ -1,6 +1,6 @@
 import React from 'react';
 import { View, Image, ImageBackground, StyleSheet, Animated } from 'react-native';
-import RedHatText from './RedHatText';
+import RedHatSBText from './RedHatSBText';
 
 type Props = {
   backgroundImage: any;
@@ -16,11 +16,14 @@ const DisplayCard: React.FC<Props> = ({ backgroundImage, animatedImage, sittingT
     <View style={styles.container}>
       <ImageBackground source={backgroundImage} imageStyle={{ opacity: 0.7 }} style={styles.background}>
         <View style={styles.textWindow}>
-          <RedHatText 
+          <RedHatSBText 
             style={styles.timer} 
-            textColor={textColor}>
+            textColor={textColor}
+            fontSize={30}
+            fontWeight='bold'
+          >
             {formatTime(sittingTime)}
-          </RedHatText>
+          </RedHatSBText>
         </View>
         <Image source={require('../assets/images/snow.png')} style={styles.snow} resizeMode='cover' />
         <Animated.View style={[styles.animation, { left: leftOffset }]}>
@@ -78,27 +81,6 @@ const styles = StyleSheet.create({
     elevation: 5, // Elevation for Android
     opacity: 1,
   },
-//   textWindow: {
-//     position: 'absolute',
-//     top: 80,
-//     left: 80,
-//     right: 80,
-//     bottom: 120,
-//     backgroundColor: 'rgba(202, 240, 248, 1)',
-//     padding: 10,
-//     borderRadius: 15,
-//     marginBottom: 10,
-//     alignItems: 'center',
-//     justifyContent: 'center',
-//     borderWidth: 2,
-//     borderColor: '#00b4d8',
-//     shadowColor: '#000',
-//     shadowOffset: { width: 0, height: 2 },
-//     shadowOpacity: 0.3,
-//     shadowRadius: 4,
-//     elevation: 5,
-//     opacity: 1,
-//   },
   animation: {
     position: 'absolute',
     bottom: 15,
@@ -112,9 +94,7 @@ const styles = StyleSheet.create({
     height: 40,
   },
   timer: {
-    fontSize: 30,
-    // fontFamily: 'RedHatText-Medium',
-    color: '#000',
+    fontSize: 40,
     textAlign: 'center',
   },
   snow: {
