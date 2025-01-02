@@ -1,74 +1,145 @@
-import { Image, StyleSheet, Platform } from 'react-native';
+import React, { useState, useRef, useEffect } from 'react';
+import { SafeAreaView, View, StyleSheet, Animated, ImageBackground } from 'react-native';
+import { BlurView } from 'expo-blur';
+import { TimerPickerModal } from "react-native-timer-picker";
+import { LinearGradient } from "expo-linear-gradient"; 
+import LongButton from '@/components/LongButton';
+import SnowBall from '../../assets/icons/snowBall.svg';
+import SantHat from '../../assets/icons/santaHat.svg';
+import ChristmasTree from '../../assets/icons/christmasTree.svg';
+import DisplayCard from '@/components/DisplayCard';
+import SantaSleighD from '@/components/SantaSleighD';
 
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+export default function TrackingPage(): JSX.Element {
+    const [sittingTime, setSittingTime] = useState(0);
+    const [maxSittingTime, setMaxSittingTime] = useState(10); // Seconds
+    const [isSitting, setIsSitting] = useState(false);
+    const progress = useRef(new Animated.Value(0)).current;
+    const intervalRef = useRef<NodeJS.Timeout | null>(null); // Ref to store the interval ID
+    const [showPicker, setShowPicker] = useState(false);
 
-export default function HomeScreen() {
-  return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
-        />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Hello World</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({
-              ios: 'cmd + d',
-              android: 'cmd + m',
-              web: 'F12'
-            })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
-  );
+    useEffect(() => {
+        const travelDistance = sittingTime / maxSittingTime;
+        Animated.timing(progress, {
+            toValue: travelDistance,
+            duration: 500,
+            useNativeDriver: false, // Important for percentage based animation
+        }).start();
+    }, [sittingTime]);
+
+    const startSittingTimer = () => {
+        if (!isSitting) {
+            setIsSitting(true);
+            intervalRef.current = setInterval(() => {
+                setSittingTime(prev => {
+                    if (prev >= maxSittingTime) {
+                        clearInterval(intervalRef.current!);
+                        intervalRef.current = null; 
+                        alert('Time to stand!');
+                        return maxSittingTime; // Ensure it doesn't go over max
+                    }
+                    return prev + 1;
+                });
+            }, 1000); // ms
+            return () => clearInterval(intervalRef.current!); // Cleanup on unmount
+        }
+    };
+
+    const resetTimer = () => {
+        if (intervalRef.current) {
+            clearInterval(intervalRef.current);
+        }
+        setSittingTime(0);
+        progress.setValue(0);
+        setIsSitting(false); 
+    };
+
+    const sleighPosition = progress.interpolate({
+        inputRange: [0, 1],
+        outputRange: ['0%', '100%'],
+    });
+
+    const formatTime = (seconds: number) => {
+        const hours = Math.floor(seconds / 3600);
+        const minutes = Math.floor((seconds % 3600) / 60);
+        const remainingSeconds = seconds % 60;
+        return `${hours.toString().padStart(2, '0')} : ${minutes.toString().padStart(2, '0')} : ${remainingSeconds.toString().padStart(2, '0')}`;
+    }
+
+    const handleDurationChange = (duration: { hours: number, minutes: number }) => {
+        const totalSeconds = duration.hours * 3600 + duration.minutes * 60;
+        return totalSeconds;
+    };
+
+    return (
+        <ImageBackground source={require('../../assets/images/chtree.jpg')} resizeMode='cover' style={styles.backgroundImage}>
+            <BlurView intensity={15} style={styles.fullScreenBlur}>
+                <SafeAreaView style={styles.container}>
+                    <View style={styles.title}>
+                        <SantaSleighD textColor='#0077b6' fontSize={50}>Sitting Time</SantaSleighD>
+                    </View>
+
+                    <DisplayCard
+                        backgroundImage={require('../../assets/images/snowfallbg.jpg')}
+                        animatedImage={require('../../assets/images/sleigh.png')}
+                        duringTime={sittingTime}
+                        leftOffset={sleighPosition}
+                        textColor='#1d3557'
+                        formatTime={formatTime}
+                    />
+
+                    <View style={styles.buttons}>
+                        <LongButton icon={<SnowBall width={40} height={40} />} label="Set Sitting Time" onPress={() => setShowPicker(true)} />
+                        <View style={styles.modalContainer}>
+                            <TimerPickerModal
+                                hideSeconds
+                                visible={showPicker}
+                                setIsVisible={setShowPicker}
+                                onConfirm={(pickedDuration) => {
+                                    setMaxSittingTime(handleDurationChange(pickedDuration));
+                                    setShowPicker(false);
+                                }}
+                                onCancel={() => setShowPicker(false)}
+                                LinearGradient={LinearGradient}
+                                styles={{
+                                    theme: "dark",
+                                }}
+                                modalProps={{
+                                    overlayOpacity: 0.2,
+                                }}
+                            />
+                            <LongButton icon={<SantHat width={40} height={40} />} label="Start" onPress={startSittingTimer} disabled={isSitting}/>
+                            <LongButton icon={<ChristmasTree width={40} height={40} />} label="Reset" onPress={resetTimer} disabled={!isSitting && sittingTime === 0} />
+                        </View> 
+                    </View>
+                </SafeAreaView>
+            </BlurView>
+        </ImageBackground>
+    );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
-  },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
-  },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
-  },
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover', // Ensure the image covers the entire screen
+    },
+    fullScreenBlur: {
+        flex: 1,
+    },
+    container: {
+        flex: 1,
+        padding: 20,
+        backgroundColor: 'transparent', // Make the background transparent to show the image
+        alignItems: 'center',
+    },
+    title: {
+        marginTop: 20,
+    },
+    buttons: {
+        width: '100%',
+    },
+    modalContainer: {
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
 });

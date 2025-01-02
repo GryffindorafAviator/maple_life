@@ -3,7 +3,7 @@ import React from 'react';
 import { Platform } from 'react-native';
 
 import { HapticTab } from '@/components/HapticTab';
-import { IconSymbol } from '@/components/ui/IconSymbol';
+import XmasIconSymbol from '@/components/ui/XmasIconSymbol';
 import TabBarBackground from '@/components/ui/TabBarBackground';
 import { Colors } from '@/constants/Colors';
 import { useColorScheme } from '@/hooks/useColorScheme';
@@ -30,24 +30,23 @@ export default function TabLayout() {
         name="sitting_tracking"
         options={{
           title: 'Sitting',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="timer.fill" color={color} />,
+          tabBarIcon: ({ color }) => <XmasIconSymbol source={require('../../assets/icons/christmas-tree.png')} />,
+        }}
+      />
+      <Tabs.Screen
+        name="eating_tracking"
+        options={{
+          title: 'Eating',
+          tabBarIcon: ({ color }) => <XmasIconSymbol source={require('../../assets/icons/christmas-wreath.png')} />,
         }}
       />
       <Tabs.Screen
         name="index"
         options={{
-          title: 'Eating',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="house.fill" color={color} />,
-        }}
-      />
-      <Tabs.Screen
-        name="explore"
-        options={{
-          title: 'Explore',
-          tabBarIcon: ({ color }) => <IconSymbol size={28} name="paperplane.fill" color={color} />,
+          title: 'Log',
+          tabBarIcon: ({ color }) => <XmasIconSymbol source={require('../../assets/icons/christmas-bell.png')} />,
         }}
       />
     </Tabs>
-  
   );
 }

@@ -8,7 +8,6 @@ import SnowBall from '../../assets/icons/snowBall.svg';
 import SantHat from '../../assets/icons/santaHat.svg';
 import ChristmasTree from '../../assets/icons/christmasTree.svg';
 import DisplayCard from '@/components/DisplayCard';
-import RedHatText from '@/components/RedHatSBText';
 import SantaSleighD from '@/components/SantaSleighD';
 
 export default function TrackingPage(): JSX.Element {
@@ -77,13 +76,13 @@ export default function TrackingPage(): JSX.Element {
             <BlurView intensity={15} style={styles.fullScreenBlur}>
                 <SafeAreaView style={styles.container}>
                     <View style={styles.title}>
-                        <SantaSleighD textColor='#0077b6' fontSize={47}>Sitting Time</SantaSleighD>
+                        <SantaSleighD textColor='#0077b6' fontSize={50}>Sitting Time</SantaSleighD>
                     </View>
 
                     <DisplayCard
                         backgroundImage={require('../../assets/images/snowfallbg.jpg')}
                         animatedImage={require('../../assets/images/sleigh.png')}
-                        sittingTime={sittingTime}
+                        duringTime={sittingTime}
                         leftOffset={sleighPosition}
                         textColor='#1d3557'
                         formatTime={formatTime}

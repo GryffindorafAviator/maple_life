@@ -5,13 +5,13 @@ import RedHatSBText from './RedHatSBText';
 type Props = {
   backgroundImage: any;
   animatedImage: any;
-  sittingTime: number;
+  duringTime: number;
   leftOffset: Animated.AnimatedInterpolation<number>;
   textColor: string;
   formatTime: (seconds: number) => string;
 };
 
-const DisplayCard: React.FC<Props> = ({ backgroundImage, animatedImage, sittingTime, leftOffset, textColor, formatTime }) => {
+const DisplayCard: React.FC<Props> = ({ backgroundImage, animatedImage, duringTime, leftOffset, textColor, formatTime }) => {
   return (
     <View style={styles.container}>
       <ImageBackground source={backgroundImage} imageStyle={{ opacity: 0.7 }} style={styles.background}>
@@ -22,7 +22,7 @@ const DisplayCard: React.FC<Props> = ({ backgroundImage, animatedImage, sittingT
             fontSize={30}
             fontWeight='bold'
           >
-            {formatTime(sittingTime)}
+            {formatTime(duringTime)}
           </RedHatSBText>
         </View>
         <Image source={require('../assets/images/snow.png')} style={styles.snow} resizeMode='cover' />
